@@ -46,5 +46,36 @@ def webhook():
 
     return {"status": "sent"}
 
+@app.route("/test-sell", methods=["GET"])
+def test_sell():
+    data = {
+        "signal": "SELL",
+        "symbol": "XAUUSD",
+        "price": "4485.17",
+        "time": "TEST"
+    }
+
+    signal = data.get("signal", "")
+    symbol = data.get("symbol", "")
+    price = data.get("price", "")
+    time = data.get("time", "")
+
+    message = (
+        f"🔴 VENTE OR\n\n"
+        f"📈 Symbole : {symbol}\n"
+        f"💰 Prix : {price}\n"
+        f"🕒 Heure : {time}\n\n"
+        f"⚠️ Signal SELL détecté"
+    )
+
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+    requests.post(url, json={
+        "chat_id": CHAT_ID,
+        "text": message
+    })
+
+    return {"status": "test sell sent"}
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
