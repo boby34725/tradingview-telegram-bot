@@ -18,14 +18,12 @@ def webhook():
     signal = data.get("signal", "")
     symbol = data.get("symbol", "")
     price = data.get("price", "")
-    time = data.get("time", "")
 
     if signal == "BUY":
         message = (
             f"🟢 ACHAT OR\n\n"
             f"📈 Symbole : {symbol}\n"
             f"💰 Prix : {price}\n"
-            f"🕒 Heure : {time}\n\n"
             f"🚀 Signal BUY détecté"
         )
     else:
@@ -33,7 +31,6 @@ def webhook():
             f"🔴 VENTE OR\n\n"
             f"📈 Symbole : {symbol}\n"
             f"💰 Prix : {price}\n"
-            f"🕒 Heure : {time}\n\n"
             f"⚠️ Signal SELL détecté"
         )
 
