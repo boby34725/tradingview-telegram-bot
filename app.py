@@ -15,7 +15,27 @@ def home():
 def webhook():
     data = request.json
 
-    message = f"📢 Signal TradingView\n\n{data}"
+    signal = data.get("signal", "")
+    symbol = data.get("symbol", "")
+    price = data.get("price", "")
+    time = data.get("time", "")
+
+    if signal == "BUY":
+        message = (
+            f"🟢 ACHAT OR\n\n"
+            f"📈 Symbole : {symbol}\n"
+            f"💰 Prix : {price}\n"
+            f"🕒 Heure : {time}\n\n"
+            f"🚀 Signal BUY détecté"
+        )
+    else:
+        message = (
+            f"🔴 VENTE OR\n\n"
+            f"📈 Symbole : {symbol}\n"
+            f"💰 Prix : {price}\n"
+            f"🕒 Heure : {time}\n\n"
+            f"⚠️ Signal SELL détecté"
+        )
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
