@@ -21,14 +21,14 @@ def webhook():
 
     if signal == "BUY":
         message = (
-            f"🟢 ACHAT OR\n\n"
+            f"🟢 ACHAT \n\n"
             f"📈 Symbole : {symbol}\n"
             f"💰 Prix : {price}\n"
             f"🚀 Signal BUY détecté"
         )
     else:
         message = (
-            f"🔴 VENTE OR\n\n"
+            f"🔴 VENTE \n\n"
             f"📈 Symbole : {symbol}\n"
             f"💰 Prix : {price}\n"
             f"⚠️ Signal SELL détecté"
