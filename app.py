@@ -112,6 +112,10 @@ Trade clôturé à 0.
     # ========================================
 
     elif signal == "BUY":
+
+        if sl == "-" or tp1 == "-":
+            return {"status": "ignored", "reason": "BUY incomplete"}
+
         message = f"""🟢 MT5 SIGNALS
 
 🟢 ACHAT
@@ -129,6 +133,10 @@ Trade clôturé à 0.
 """
 
     elif signal == "SELL":
+
+        if sl == "-" or tp1 == "-":
+            return {"status": "ignored", "reason": "SELL incomplete"}
+
         message = f"""🔴 MT5 SIGNALS
 
 🔴 VENTE
