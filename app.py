@@ -10,14 +10,7 @@ CHAT_ID = os.environ["CHAT_ID"]
 
 def send(message):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
-    requests.post(
-        url,
-        json={
-            "chat_id": CHAT_ID,
-            "text": message
-        }
-    )
+    requests.post(url, json={"chat_id": CHAT_ID, "text": message})
 
 
 def price(v):
@@ -36,8 +29,7 @@ def home():
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-
-    data = request.json
+    data = request.json or {}
 
     signal = data.get("signal", "")
     event = data.get("event", "")
@@ -54,11 +46,72 @@ def webhook():
     level = price(data.get("level"))
 
     # ========================================
+    # TP / SL / BE EN PREMIER
+    # ========================================
+
+    if event == "TP1":
+        message = f"""🎯 TP1 ATTEINT
+
+📊 {symbol} {timeframe}
+
+Prix : {level}
+
+➡️ Déplacer le Stop au Break Even.
+
+🕒 {time}
+"""
+
+    elif event == "TP2":
+        message = f"""🎯 TP2 ATTEINT
+
+📊 {symbol} {timeframe}
+
+Prix : {level}
+
+Trade sécurisé.
+
+🕒 {time}
+"""
+
+    elif event == "TP3":
+        message = f"""🏆 TP3 ATTEINT
+
+📊 {symbol} {timeframe}
+
+Prix : {level}
+
+Trade terminé.
+
+🕒 {time}
+"""
+
+    elif event == "SL":
+        message = f"""🛑 STOP LOSS
+
+📊 {symbol} {timeframe}
+
+Prix : {level}
+
+🕒 {time}
+"""
+
+    elif event == "BE":
+        message = f"""⚪ BREAK EVEN
+
+📊 {symbol} {timeframe}
+
+Prix : {level}
+
+Trade clôturé à 0.
+
+🕒 {time}
+"""
+
+    # ========================================
     # SIGNAL INITIAL
     # ========================================
 
-    if signal == "BUY":
-
+    elif signal == "BUY":
         message = f"""🟢 MT5 SIGNALS
 
 🟢 ACHAT
@@ -76,7 +129,6 @@ def webhook():
 """
 
     elif signal == "SELL":
-
         message = f"""🔴 MT5 SIGNALS
 
 🔴 VENTE
@@ -94,112 +146,79 @@ def webhook():
 """
 
     elif signal == "BUY EARLY":
-
         message = f"""🟢 BUY EARLY
 
-📊 {symbol}
+📊 {symbol} {timeframe}
+
+📍 Entrée : {entry}
 
 🕒 {time}
 """
 
     elif signal == "SELL EARLY":
-
         message = f"""🔴 SELL EARLY
 
-📊 {symbol}
+📊 {symbol} {timeframe}
+
+📍 Entrée : {entry}
 
 🕒 {time}
 """
 
-    # ========================================
-    # TP / SL / BE
-    # ========================================
-
-    elif event == "TP1":
-
-        message = f"""🎯 TP1 ATTEINT
-
-📊 {symbol}
-
-Prix : {level}
-
-➡️ Déplacer le Stop au Break Even.
-"""
-
-    elif event == "TP2":
-
-        message = f"""🎯 TP2 ATTEINT
-
-📊 {symbol}
-
-Prix : {level}
-
-Trade sécurisé.
-"""
-
-    elif event == "TP3":
-
-        message = f"""🏆 TP3 ATTEINT
-
-📊 {symbol}
-
-Prix : {level}
-
-Trade terminé.
-"""
-
-    elif event == "SL":
-
-        message = f"""🛑 STOP LOSS
-
-📊 {symbol}
-
-Prix : {level}
-"""
-
-    elif event == "BE":
-
-        message = f"""⚪ BREAK EVEN
-
-📊 {symbol}
-
-Trade clôturé à 0.
-"""
-
     else:
-
         message = str(data)
 
     send(message)
-
     return {"status": "ok"}
 
 
-# ========================================
-# TEST
-# ========================================
-
 @app.route("/test")
 def test():
-
     data = {
-        "signal":"BUY",
-        "symbol":"BTCUSD",
-        "timeframe":"M5",
-        "entry":"60000",
-        "sl":"59920",
-        "tp1":"60080",
-        "tp2":"60160",
-        "tp3":"60240",
-        "time":"26/06/2026 18:15"
+        "signal": "BUY",
+        "symbol": "BTCUSD",
+        "timeframe": "M5",
+        "entry": "60000",
+        "sl": "59920",
+        "tp1": "60080",
+        "tp2": "60160",
+        "tp3": "60240",
+        "time": "TEST"
     }
 
-    requests.post(
-        "http://127.0.0.1:10000/webhook",
-        json=data
-    )
+    message = f"""🟢 MT5 SIGNALS
 
-    return "Test envoyé"
+🟢 ACHAT
+
+📊 {data["symbol"]} {data["timeframe"]}
+
+📍 Entrée : {price(data["entry"])}
+🛑 SL : {price(data["sl"])}
+
+🎯 TP1 : {price(data["tp1"])}
+🎯 TP2 : {price(data["tp2"])}
+🎯 TP3 : {price(data["tp3"])}
+
+🕒 {data["time"]}
+"""
+    send(message)
+    return "Test BUY envoyé"
+
+
+@app.route("/test-tp1")
+def test_tp1():
+    message = """🎯 TP1 ATTEINT
+
+📊 BTCUSD M5
+
+Prix : 60080.00
+
+➡️ Déplacer le Stop au Break Even.
+
+🕒 TEST
+"""
+    send(message)
+    return "Test TP1 envoyé"
 
 
 if __name__ == "__main__":
