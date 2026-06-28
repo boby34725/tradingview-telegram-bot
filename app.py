@@ -76,3 +76,29 @@ def test_sell():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
+@app.route("/test")
+def test():
+
+    message = """
+🧪 TEST SIGNAL
+
+🟢 BUY XAUUSD
+
+📍 Entry : 3350.50
+🛑 SL : 3348.20
+
+🎯 TP1 : 3352.80
+🎯 TP2 : 3355.10
+🎯 TP3 : 3357.40
+"""
+
+    requests.post(
+        f"https://api.telegram.org/bot{TOKEN}/sendMessage",
+        json={
+            "chat_id": CHAT_ID,
+            "text": message
+        }
+    )
+
+    return "Signal envoyé !"
