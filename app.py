@@ -16,10 +16,7 @@ def send(message):
 def price(v):
     if v == "" or v is None:
         return "-"
-    try:
-        return f"{float(v):.2f}"
-    except:
-        return str(v).replace(" ", "")
+    return str(v).replace(" ", "")
 
 
 @app.route("/")
